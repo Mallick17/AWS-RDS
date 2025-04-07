@@ -25,4 +25,9 @@ We can architect a solution to build for fault tolerance by configuring Amazon R
    - Mobile and online games need a database platform with high throughput and high availability. Amazon RDS manages the database infrastructure so game developers dont have to worry about provisioning, scaling, or monitoring database servers. Amazon RDS provides familiar database engines that can rapidly grow capacity to meet user demand.
 
 ### What else should i keep in mind when using Amazon RDS?
-- 
+- Amazon RDS is fully managed. "Fully managed" means that AWS automates the maintainence and security of the database instance without your doing anything. However, you might need access to manage the operating system and update security patches yourself. If so, then you can provision an EC2 instance and use it to host your own database.
+- Suppose that you deccide to host your owndatabase on an EC2 instance. Then, you are responsible for many of the autoamted tasks that Amazon RDS would automatically perform for you.
+
+### How much does Amazon RDS cost?
+Amazon RDS pricing follows the pay-only-for-what-you use model. It has no minimun fee. You can pay for Amazon RDS by using On-Demand or Reserved Instances, similar to what you learned about the Amazon EC2 options.
+- Amazon RDS provides a selection of instance types that are optimized to fit different relational database use cases.
