@@ -1,5 +1,4 @@
-![image](https://github.com/user-attachments/assets/64dc948d-ddb4-407c-ba94-e207856447a5)# RDS
-Relational Database Service
+# Relational Database Service (RDS)
 
 ## What does AWS RDS do?
 AWS RDS(Relational Database Service) is a distributed relational database managed service. It is cloud based and designed to simplify the setup, operation and scaling of relational databases. Administrative process like patching, backing up databases and enabling point-in-time recovery are managed automatically.
