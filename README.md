@@ -24,3 +24,9 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 | **Hardware Lifecycle**       | Customer                   | AWS                       | AWS                       | AWS manages hardware lifecycle for EC2 and RDS; customer for on-premises.  |
 | **Power, Network, and Cooling** | Customer                | AWS                       | AWS                       | AWS provides infrastructure support for EC2 and RDS; customer for on-premises. |
 
+## RDS Instance Families
+A DB instance class determines the computation and memory capacity of a DB instance. A DB instance class consists of both the DB instance class type and the size. Amazon RDS supports the following instance class types, where the asterisk (*) represents the generation, optional attribute, and size:
+- **General-purpose (db.m*):** Balanced for most applications.
+- **Memory-optimized (db.r*, db.x*, db.z*):** High memory for memory-intensive tasks.
+- **Compute-optimized (db.c*):** High compute for intensive applications.
+- **Burstable-performance (db.t*):** Cost-effective for workloads with occasional spikes.
