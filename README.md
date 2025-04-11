@@ -82,3 +82,6 @@ This `chat-app-db` instance is a lightly used PostgreSQL database on a `db.t3.mi
 
 ---
 
+## 2. Connectivity & Security
+
+![collage](https://github.com/user-attachments/assets/58d51a6d-7a78-466e-a462-a91b21ddbdd9)
