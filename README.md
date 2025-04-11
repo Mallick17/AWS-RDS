@@ -294,3 +294,5 @@ The "Monitoring" tab for `chat-app-db` shows a lightly utilized `db.t3.micro` in
 </details>
 
 ## 4. Logs & Events
+
+![3  Logs- -Events](https://github.com/user-attachments/assets/baf059b2-79e8-4360-9565-eb62f4078bd0)
