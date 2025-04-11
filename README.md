@@ -729,7 +729,7 @@ If data migration were enabled for `chat-app-db`, the "Data Migrations - New" ta
 The image you provided shows the "Data Migrations - New" tab of the AWS RDS instance `chat-app-db`, but it currently indicates "No associated data migrations." This suggests that data migration is not enabled or configured yet. Data migration in AWS RDS typically involves moving data into or out of your RDS instance, often using AWS Database Migration Service (DMS). If data migrations were enabled, this tab would display additional components to manage and monitor the migration process. Below, I’ll explain **what** each component would be, **why** it matters, **how** it’s configured, **when** it’s relevant, and what happens if it’s **disabled/enabled**—all in an easy-to-understand way. Since the feature is not active here, I’ll base this on how it would work if enabled using AWS DMS.
 
 <details>
-  <sumamry>Let’s explore the components that would appear if this feature were enabled.</sumamry>
+  <summary>Let’s explore the components that would appear if this feature were enabled.</summary>
 
 ### **Overview of Data Migrations**
 Enabling data migration means setting up a process to copy or move data from one source (e.g., an on-premises database, another cloud database, or an EC2 instance) to your RDS instance (`chat-app-db`) or vice versa. It’s like packing up your belongings from one house and moving them to a new one, ensuring everything arrives safely. AWS DMS makes this easier by handling the heavy lifting. 
