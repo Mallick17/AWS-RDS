@@ -571,3 +571,7 @@ This section is about where and how your data is stored, like deciding the size 
 </details>  
 
 ---
+
+## 6. Mainteinance & Backups
+
+![5  Maintainance- -Backup](https://github.com/user-attachments/assets/6c9766b3-f9a2-484a-842d-7eee64a926a7)
