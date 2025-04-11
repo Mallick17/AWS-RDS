@@ -154,3 +154,96 @@ The "Connectivity & Security" settings for `chat-app-db` configure how the Postg
 </details>
 
 ---
+
+## 3. Monitoring
+The "Monitoring" tab for `chat-app-db` shows a lightly utilized `db.t3.micro` instance with ample burst credits, no connection activity, and low database load as of April 10, 2025. Metrics like CPUUtilization, DBLoad, and BurstBalance indicate the instance is well within capacity, suitable for development or low-traffic use. Enabling monitoring provides critical insights for performance tuning, scaling, and cost management. If usage increases, consider upgrading the instance class or enabling enhanced monitoring for deeper insights.
+
+### General Monitoring Settings
+- **Period**: Set to 5 minutes, defining the granularity of data points.
+- **UTC Timezone**: Metrics are timestamped in UTC, aligning with global operations.
+- **Add Instance to Compare**: Allows comparing metrics across multiple instances.
+- **Alarm Recommendations**: Suggests setting alarms for thresholds (e.g., CPU > 80%).
+
+![2  RDS-Monitoring](https://github.com/user-attachments/assets/74a755d2-62c0-49ac-bbd2-e9d49daf0e59)
+
+<details>
+  <summary>It shows the "Monitoring" tab of the AWS RDS instance `chat-app-db`, displaying various performance metrics tracked over a 5-minute period on April 10, 2025. These metrics are visualized using CloudWatch, AWS's monitoring and observability service.</summary>
+
+### 1. **BurstBalance**
+- **What**: Represents the percentage of CPU burst credits available for the `db.t3.micro` instance (a burstable performance instance). The graph shows it near 100% over the 5-minute period.
+- **Why**: Burstable instances like `t3` accumulate credits when idle and use them during bursts of activity. A low BurstBalance indicates the instance may throttle if credits are depleted.
+- **How**: Automatically tracked by CloudWatch. No manual configuration is needed, but the instance class (e.g., `t3.micro`) determines credit accrual.
+- **When**: Monitor during periods of high activity to ensure sufficient credits. Consider upgrading to a non-burstable instance (e.g., `m5`) if BurstBalance frequently drops.
+- **Disabled/Enabled**: If monitoring is disabled, you won’t see BurstBalance, risking unexpected throttling. Enabling it provides visibility into burst capacity.
+
+### 2. **CheckpointLag**
+- **What**: Measures the time lag (in seconds) between the last database checkpoint and the current time. The graph shows it at 0 seconds.
+- **Why**: Checkpoints ensure data durability by writing changes to disk. A high lag indicates potential performance issues or data loss risk if the instance fails.
+- **How**: Managed by the PostgreSQL engine. No user configuration is required, but you can adjust checkpoint settings via parameter groups.
+- **When**: Check during heavy write operations or after configuration changes to ensure timely checkpoints.
+- **Disabled/Enabled**: If monitoring is off, you won’t detect lag issues. Enabling it helps identify when to tune checkpoint frequency.
+
+### 3. **CPUCreditBalance**
+- **What**: Shows the number of CPU credits available for burstable performance. The graph remains steady around 200 credits.
+- **Why**: Credits determine how long the instance can handle CPU-intensive tasks. A declining balance signals potential throttling.
+- **How**: Automatically managed by AWS based on instance usage. Visible via CloudWatch metrics.
+- **When**: Relevant during load testing or when scaling workloads. A low balance may require instance class upgrades.
+- **Disabled/Enabled**: Without monitoring, you can’t track credit depletion. Enabling it aids in capacity planning.
+
+### 4. **CPUSurplusCreditBalance**
+- **What**: Indicates surplus CPU credits beyond the baseline performance. The graph shows it at 0.
+- **Why**: Surplus credits allow sustained performance above the baseline. A value of 0 suggests the instance is operating within its baseline.
+- **How**: Automatically calculated by AWS for burstable instances. No direct configuration.
+- **When**: Monitor if you suspect the instance is under heavy, sustained load beyond its baseline.
+- **Disabled/Enabled**: Monitoring off means missing surplus credit insights. Enabling it helps optimize instance sizing.
+
+### 5. **CPUSurplusCreditsCharged**
+- **What**: Tracks the number of surplus CPU credits used when exceeding the baseline. The graph shows minimal usage (around 0.6).
+- **Why**: Indicates usage of paid surplus credits, which incur additional costs on burstable instances.
+- **How**: Automatically logged by AWS. Visible in CloudWatch.
+- **When**: Check during unexpected cost spikes or sustained high CPU usage.
+- **Disabled/Enabled**: Without monitoring, you might incur hidden costs. Enabling it ensures cost transparency.
+
+### 6. **CPUUtilization**
+- **What**: Measures the percentage of CPU in use, ranging from 3% to 4% over the period.
+- **Why**: Indicates the instance’s workload. High utilization may signal a need for scaling or optimization.
+- **How**: Tracked by CloudWatch. Can be influenced by instance class and workload.
+- **When**: Monitor during peak usage to assess performance bottlenecks.
+- **Disabled/Enabled**: If disabled, you miss utilization trends. Enabling it supports proactive scaling.
+
+### 7. **DatabaseConnections**
+- **What**: Shows the number of active database connections, consistently at 0.
+- **Why**: Indicates client activity. Zero connections suggest no current usage, which is expected for a development or idle instance.
+- **How**: Automatically monitored by RDS. Can be influenced by connection pooling or application behavior.
+- **When**: Check during application testing or troubleshooting connectivity issues.
+- **Disabled/Enabled**: Without monitoring, you can’t detect connection spikes. Enabling it helps manage connection limits.
+
+### 8. **DBLoad**
+- **What**: Represents the database load, with peaks up to 0.3.
+- **Why**: Measures the average number of active sessions per CPU. Higher values indicate increased load, potentially affecting performance.
+- **How**: Calculated by RDS based on session activity. Visible in CloudWatch.
+- **When**: Monitor during high-traffic periods to ensure the instance handles load efficiently.
+- **Disabled/Enabled**: Off means missing load spikes. Enabling it aids in performance tuning.
+
+### 9. **DBLoadCPU**
+- **What**: Shows the CPU load attributed to database operations, with minor fluctuations.
+- **Why**: Helps isolate CPU usage caused by database queries, aiding in query optimization.
+- **How**: Automatically tracked by RDS. Influenced by query complexity and indexing.
+- **When**: Relevant when diagnosing slow queries or high CPU usage.
+- **Disabled/Enabled**: Without monitoring, query performance issues go unnoticed. Enabling it supports optimization.
+
+### 10. **DBLoadNonCPU**
+- **What**: Measures non-CPU-related database load (e.g., I/O or memory), remaining low.
+- **Why**: Identifies bottlenecks outside CPU, such as disk I/O, which may require storage adjustments.
+- **How**: Monitored by RDS. Affected by storage type (e.g., General Purpose SSD).
+- **When**: Check during I/O-intensive operations (e.g., large data imports).
+- **Disabled/Enabled**: Off means missing non-CPU bottlenecks. Enabling it ensures holistic performance tracking.
+
+### 11. **DBLoadRelativeToNumCPUs**
+- **What**: Normalizes DBLoad by the number of virtual CPUs (vCPUs), with peaks around 0.3.
+- **Why**: Provides a per-CPU load metric, useful for comparing across instance types.
+- **How**: Calculated by RDS based on vCPUs and session data.
+- **When**: Relevant when planning instance upgrades or multi-CPU scaling.
+- **Disabled/Enabled**: Without monitoring, scaling decisions lack data. Enabling it supports informed upgrades.
+
+</details>
