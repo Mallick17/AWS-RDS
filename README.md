@@ -293,10 +293,12 @@ The "Monitoring" tab for `chat-app-db` shows a lightly utilized `db.t3.micro` in
 
 </details>
 
+---
+
 ## 4. Logs & Events
 The "Logs & Events" tab for `chat-app-db` indicates a stable instance with no alarms or recent events as of April 10, 2025, but with 49 log files generated the previous day. The absence of alarms suggests no automated monitoring, while the logs (e.g., `postgres.log`, error logs) offer a record of activity and issues. Enabling CloudWatch alarms would enhance proactive monitoring, and reviewing logs can help diagnose any underlying problems. The low CPU usage and zero sessions align with the lack of events, typical for a development or idle instance. Adjust logging and alarm settings based on your operational needs.
 
-![3  Logs- -Events](https://github.com/user-attachments/assets/baf059b2-79e8-4360-9565-eb62f4078bd0)
+![image](https://github.com/user-attachments/assets/e8e22556-fe6d-4240-85a4-489ab32de964)
 
 <details>
   <summary>It shows the "Logs & Events" tab of the AWS RDS instance chat-app-db. This section provides insights into CloudWatch alarms, recent events, and available logs for the instance. It’ll also address what happens if certain features are disabled or enabled where applicable.</summary>
@@ -338,3 +340,234 @@ The "Logs & Events" tab for `chat-app-db` indicates a stable instance with no al
 - **Recommendations**: `3 informational` – Optimization suggestions available.
 
 </details>
+
+---
+
+# 5. Configuration
+The "Configuration" tab for `chat-app-db` shows a `db.t3.micro` PostgreSQL 17.2 instance with 20 GiB encrypted storage (gp2), enabled autoscaling up to 1000 GiB, and standard monitoring with Performance Insights. It’s a single-AZ instance with deletion protection disabled, using IAM DB authentication and a master password. This setup suits a development environment, but enabling Multi-AZ, Enhanced Monitoring, or DevOps Guru could enhance availability and diagnostics for production use. Adjust based on workload and compliance needs.
+
+![4  RDS-Configuration](https://github.com/user-attachments/assets/f1478b43-4adc-43fc-852f-46f199e9b314)
+
+<details>
+  <summary>It shows the "Configuration" tab of the AWS RDS instance `chat-app-db`. This section details the instance's configuration settings, including instance class, storage, monitoring, and other architectural parameters.</summary>
+
+### 1. **Instance Configuration**
+- **DB Instance ID**: `chat-app-db`
+ - **What is DB Instance ID (`chat-app-db`)?**
+  - This is the unique name you give your database in AWS. It’s like a label so you can find and manage it easily among other databases.
+  - **Why does it matter?**
+  - Having a unique name helps you (and AWS tools) know exactly which database you’re working with, especially if you have many. It’s useful for connecting apps or running commands.
+  - **How**: Set during instance creation.
+  - **When**: Relevant during setup and when modifying the instance.
+  - **Disabled/Enabled**: Not a toggle; it’s a fixed identifier.
+
+- **Engine Version**: `17.2`
+ - **What is Engine Version (17.2)?**
+  - This is the specific version of PostgreSQL (a type of database software) your instance uses, in this case, version 17.2.
+ - **Why does it matter?**
+  - The version determines what features you get (like new tools or better speed) and how secure it is (older versions might have fixed bugs in newer ones). It’s like choosing the latest update for your phone app to avoid old problems.
+  - **How**: Selected during creation; can be upgraded via the console or API during maintenance windows.
+  - **When**: Check during setup or when applying security updates.
+  - **Disabled/Enabled**: Not a toggle. Upgrading enables new features but may require application compatibility testing.
+
+- **RDS Extended Support**: Disabled
+ - **What is RDS Extended Support (Disabled)?**
+  - This is an optional service from AWS to keep supporting an older database version even after it’s officially outdated.
+ - **Why does it matter?**
+  - If you’re using an old version and don’t want to upgrade right away (maybe your app isn’t ready), this keeps it secure with patches. Without it, you’d have to upgrade or risk security issues. It’s disabled here, so you’re likely on a supported version already.
+  - **How**: Enabled via the AWS Management Console or API, incurring additional costs.
+  - **When**: Relevant when using an engine version nearing end-of-life (e.g., PostgreSQL 9.6).
+  - **Disabled/Enabled**: If disabled, you must upgrade to a supported version to avoid losing support. Enabling it extends support but adds costs.
+
+- **DB Name**: `chat-app_production`
+ - **What is DB Name (`chat-app_production`)?**
+  - This is the default database created when you set up the instance, like the first folder where your data lives.
+ - **Why does it matter?**
+  - It’s the starting point for storing your data. You can create more databases later, but this is the one your app connects to first. It’s like naming your main file cabinet.
+  - **How**: Specified during instance creation.
+  - **When**: Set up initially; additional databases can be created post-launch.
+  - **Disabled/Enabled**: Not a toggle; changing it requires manual database creation.
+
+- **License Model**: `postgresql-license`
+ - **What is License Model (`postgresql-license`)?**
+  - This is the legal agreement for using PostgreSQL, which is open-source and free to use.
+ - **Why does it matter?**
+  - It ensures you’re following the rules for using the software. Since PostgreSQL is open-source, there’s no extra cost, but you need to stick to its terms.
+  - **How**: Automatically applied based on the engine choice.
+  - **When**: Relevant during setup and audits.
+  - **Disabled/Enabled**: Not a toggle; it’s inherent to the engine.
+
+- **Option Groups**: `default:postgres17-2023-06` (in sync)
+ - **What are Option Groups (`default:postgres17-2023-06`, in sync)?**
+  - These are like add-ons or extra features (e.g., encryption or special tools) you can turn on for your database.
+ - **Why does it matter?**
+  - They let you customize how the database works, like adding a security lock or a performance boost. The default group here means no extra features are added yet.
+  - **How**: Selected or created during setup; modified via the console.
+  - **When**: Configured initially or when adding new features.
+  - **Disabled/Enabled**: If no custom options are enabled, only default features are available. Enabling custom options requires compatibility checks.
+
+- **Parameter Groups**: `default.postgres17` (in sync)
+ - **What are Parameter Groups (`default.postgres17`, in sync)?**
+  - These are settings that control how the database runs, like how much memory it uses or how it handles connections.
+ - **Why does it matter?**
+  - They fine-tune performance. For example, you can adjust them if your database is slow or handling too many users. The default here means it’s using standard settings.
+  - **How**: Assigned during creation; modified via the console or API.
+  - **When**: Adjusted during performance tuning or scaling.
+  - **Disabled/Enabled**: If not customized, defaults apply. Enabling custom parameters requires testing to avoid instability.
+
+- **Deletion Protection**: Disabled
+ - **What is Deletion Protection (Disabled)?**
+  - This is a safety switch that stops you from accidentally deleting the database.
+ - **Why does it matter?**
+  - It prevents mistakes, like deleting your database by clicking the wrong button. It’s off here, so be careful not to delete it by accident!
+  - **How**: Toggled during creation or modification.
+  - **When**: Enabled for production instances; disabled for development.
+  - **Disabled/Enabled**: If disabled, the instance can be deleted unintentionally. Enabling it adds a safety layer.
+
+### 2. **Instance Class**
+- **Instance Class**: `db.t3.micro`
+ - **What is Instance Class (`db.t3.micro`)?**
+  - This is the type of computer power your database gets. `db.t3.micro` is a small, budget-friendly option with 1 virtual CPU (vCPU) and 1 GB of RAM.
+ - **Why does it matter?**
+  - It decides how fast your database can handle tasks. A `t3.micro` is great for small projects or testing because it’s cheap, but it might struggle with big workloads. It also uses a “burstable” model, meaning it saves up power for short bursts when needed.
+  - **How**: Selected during creation; modifiable via the console.
+  - **When**: Chosen based on workload; upgraded during scaling.
+  - **Disabled/Enabled**: Not a toggle. Changing the class requires a maintenance window.
+- **What is vCPU (2)?**
+  - This is the number of virtual processors (2 in this case, though `t3.micro` typically has 2 vCPUs with limited baseline performance).
+- **Why does it matter?**
+  - More vCPUs can handle more tasks at once, but `t3.micro` limits how much power you get unless you use burst credits. It’s like having extra hands to help, but only for short bursts.
+
+- **What is RAM (1 GB)?**
+  - This is the memory available to store data temporarily while the database works.
+- **Why does it matter?**
+  - More RAM means the database can handle more data quickly. With 1 GB, it’s fine for light use but may slow down with heavy queries.
+
+- **Availability**: 
+ - **What is Availability?**
+  - **Master Username (`mysuser`)**: The main user account to log into the database.
+  - **Master Password**: The secret code for that user (hidden for security).
+  - **IAM DB Authentication (Not enabled)**: An option to use AWS Identity and Access Management (IAM) for logins instead of passwords.
+  - **Multi-AZ (No)**: Stands for Multi-Availability Zone, meaning no backup copy in another zone.
+  - **Secondary Zone (-)**: No secondary location since Multi-AZ is off.
+ - **Why does it matter?**
+  - The username and password let you access the database securely. IAM auth adds extra security by using AWS roles. Multi-AZ creates a standby copy in another zone for failover if something fails (like a power outage), but it’s off here, so there’s no backup copy yet.
+  - **How**: Configured during creation; Multi-AZ and IAM auth are toggleable.
+  - **When**: Set up initially; Multi-AZ enabled for high availability.
+  - **Disabled/Enabled**: If Multi-AZ is disabled, no failover exists. Enabling it adds a standby instance. If IAM auth is disabled, traditional credentials are used; enabling it requires IAM role setup.
+
+### 3. **Storage**
+This section is about where and how your data is stored, like deciding the size and type of a hard drive for your computer.
+- **Encryption**: Enabled
+  - **AWS KMS Key**: `aws/rds`
+ - **What is Encryption (Enabled, AWS KMS Key: `aws/rds`)?**
+  - This means your data is locked with a key when stored, using AWS Key Management Service (KMS).
+ - **Why does it matter?**
+  - Encryption keeps your data safe from hackers if someone gets physical access to the storage. The `aws/rds` key is a default one provided by AWS, making it easy to set up.
+  - **How**: Enabled during creation; key can be customized.
+  - **When**: Configured initially; reviewed for compliance.
+  - **Disabled/Enabled**: If disabled, data is unencrypted, increasing risk. Enabling it adds security but requires key management.
+
+- **Storage Type**: General Purpose SSD (gp2)
+ - **What is Storage Type (General Purpose SSD (gp2))?**
+  - This is the type of storage, like a solid-state drive (SSD) designed for general use.
+ - **Why does it matter?**
+  - gp2 offers a good balance of speed and cost. It’s fast enough for most apps but can be upgraded to gp3 for more performance if needed.
+  - **How**: Selected during creation.
+  - **When**: Chosen based on workload; upgraded to gp3 for higher performance.
+  - **Disabled/Enabled**: Not a toggle. Changing requires migration.
+
+- **Storage**: 20 GiB
+ - **Provisioned IOPS**: -
+  - **What is Provisioned IOPS (-)?**
+  - This is the number of input/output operations per second (IOPS) you can request, but it’s not set here.
+  - **Why does it matter?**
+  - IOPS controls how fast data can be read or written. It’s blank because gp2 autoscales IOPS based on storage size, so you don’t need to set it manually.
+ - **What is Storage (20 GiB)?**
+  - This is the amount of space allocated for your data, logs, and backups—20 gigabytes.
+ - **Why does it matter?**
+  - You need enough space for your data to grow. If it runs out, your database could stop working, so 20 GiB is a starting point for small use.
+  - **How**: Set during creation; modifiable.
+  - **When**: Increased during data growth.
+  - **Disabled/Enabled**: Not a toggle. Insufficient storage causes errors.
+
+- **Storage Throughput**: -
+  - **Storage Autoscaling**: Enabled
+- **What is Storage Autoscaling (Enabled, Maximum Storage Threshold: 1000 GiB)?**
+  - This lets the storage grow automatically up to 1000 GiB if you run out of space.
+- **Why does it matter?**
+  - It prevents your database from crashing when it gets full. With a max of 1000 GiB, you’re protected for growth, but it could increase costs.
+  - **Maximum Storage Threshold**: 1000 GiB
+- **What is Maximum Storage Threshold (1000 GiB)?**
+  - The upper limit for autoscaling storage.
+- **Why does it matter?**
+  - It caps costs and ensures you don’t accidentally scale too much. You can adjust it if needed.
+- **What is Storage Throughput (-)?**
+  - This measures how much data can be moved per second, but it’s not specified here.
+- **Why does it matter?**
+  - It affects how quickly data is processed. It’s not set because gp2 manages this automatically.
+  - **How**: Enabled during creation or modification.
+  - **When**: Configured for growing databases.
+  - **Disabled/Enabled**: If disabled, manual intervention is required. Enabling it ensures scalability but may increase costs.
+
+- **Storage File System Configuration**: Current
+- **What is Storage File System Configuration (Current)?**
+  - This is the behind-the-scenes setup of how the storage is organized.
+- **Why does it matter?**
+  - It ensures the storage works with your database. AWS handles this, so you don’t need to worry unless changing storage types.
+  - **How**: Managed by AWS; no user configuration.
+  - **When**: Relevant during storage type changes.
+  - **Disabled/Enabled**: Not a toggle.
+
+### 4. **Monitoring**
+  - **What**: Defines monitoring tools and data retention.
+  - **Why**: Provides performance visibility; Enhanced Monitoring and DevOps Guru offer deeper insights.
+  - **How**: Configured during creation or modification.
+  - **When**: Set up initially; adjusted for advanced needs.
+  - **Disabled/Enabled**: If Enhanced Monitoring or DevOps Guru are disabled, you miss detailed metrics. Enabling them adds cost and insight.
+
+- **Monitoring Type**: Standard
+  - **What is Monitoring Type (Standard)?**
+  - This is the basic level of monitoring using CloudWatch to track performance metrics.
+  - **Why does it matter?**
+  - It lets you see if your database is slow or having issues, like a health check for your car. Standard is good for basic needs.
+
+- **Database Insights - Standard**: Enabled
+  - **What is Database Insights - Standard (Enabled)?**
+  - This provides detailed performance data through CloudWatch.
+  - **Why does it matter?**
+  - It helps you spot problems like slow queries, making it easier to fix them.
+
+- **Performance Insights**: Enabled
+  - **What is Performance Insights (Enabled)?**
+  - A tool that gives a deeper look at database performance, like which queries are slow.
+  - **Why does it matter?**
+  - It’s like a detective for your database, helping you optimize it for better speed.
+
+- **Retention Period**: 7 days
+  - **What is Retention Period (7 days)?**
+  - How long monitoring data is kept—7 days here.
+  - **Why does it matter?**
+  - It lets you look back at performance history. Seven days is enough for short-term troubleshooting but might be short for long-term trends.
+
+- **AWS KMS Key**: `aws/rds`
+  - **What is AWS KMS Key (`aws/rds`)?**
+  - The key used to encrypt monitoring data.
+  - **Why does it matter?**
+  - Keeps your performance data secure, just like encrypting your files.
+
+- **Enhanced Monitoring**: Disabled
+  - **What is Enhanced Monitoring (Disabled)?**
+  - A more detailed monitoring option that tracks OS-level metrics (e.g., disk I/O).
+  - **Why does it matter?**
+  - It gives a deeper look at the database’s health, useful for complex issues. It’s off here to save costs.
+
+- **DevOps Guru**: Disabled
+  - **What is DevOps Guru (Disabled)?**
+  - An AI-powered tool to detect and suggest fixes for performance issues.
+  - **Why does it matter?**
+  - It acts like a smart assistant, finding problems you might miss. It’s disabled to avoid extra cost.
+ 
+</details>  
+
+---
