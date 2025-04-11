@@ -167,7 +167,7 @@ The "Monitoring" tab for `chat-app-db` shows a lightly utilized `db.t3.micro` in
 ![2  RDS-Monitoring](https://github.com/user-attachments/assets/74a755d2-62c0-49ac-bbd2-e9d49daf0e59)
 
 <details>
-  <summary>It shows the "Monitoring" tab of the AWS RDS instance `chat-app-db`, displaying various performance metrics tracked over a 5-minute period on April 10, 2025. These metrics are visualized using CloudWatch, AWS's monitoring and observability service.</summary>
+  <summary>It shows the "Monitoring" tab of the AWS RDS instance chat-app-db, displaying various performance metrics tracked over a 5-minute period on April 10, 2025. These metrics are visualized using CloudWatch, AWS's monitoring and observability service.</summary>
 
 ### 1. **BurstBalance**
 - **What**: Represents the percentage of CPU burst credits available for the `db.t3.micro` instance (a burstable performance instance). The graph shows it near 100% over the 5-minute period.
@@ -247,3 +247,5 @@ The "Monitoring" tab for `chat-app-db` shows a lightly utilized `db.t3.micro` in
 - **Disabled/Enabled**: Without monitoring, scaling decisions lack data. Enabling it supports informed upgrades.
 
 </details>
+
+## 4. Logs & Events
