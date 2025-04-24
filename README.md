@@ -106,57 +106,57 @@ The main purpose of a read replica is to offload read queries from the primary d
 **Q1: What storage types does AWS RDS offer?**
 AWS RDS provides three primary storage options
 
-- **General Purpose (SSD - gp2/gp3):**Balances price and performance for a wide range of workloads
+- **General Purpose (SSD - gp2/gp3):** Balances price and performance for a wide range of workloads
 
-- **Provisioned IOPS (SSD - io1):**Designed for I/O-intensive applications requiring consistent performance
+- **Provisioned IOPS (SSD - io1):** Designed for I/O-intensive applications requiring consistent performance
 
-- **Magnetic (Standard):**Legacy option, suitable for infrequent access and backward compatibility
+- **Magnetic (Standard):** Legacy option, suitable for infrequent access and backward compatibility
 
 **Q2: How does storage pricing work in AWS RDS?**
-Storage costs are based on the type and amount of storage provisioned
+Storage costs are based on the type and amount of storage provisioned
 
-- **General Purpose SSD (gp2):**Approximately $0.115 per GB-month
+- **General Purpose SSD (gp2):** Approximately $0.115 per GB-month
 
-- **Provisioned IOPS SSD (io1):**Around $0.125 per GB-month, plus $0.10 per provisioned IOPS-month
+- **Provisioned IOPS SSD (io1):** Around $0.125 per GB-month, plus $0.10 per provisioned IOPS-month
 
-- **Magnetic Storage:**About $0.10 per GB-month, with additional charges for I/O requests
+- **Magnetic Storage:**About $0.10 per GB-month, with additional charges for I/O requests
 
 **Q3: Can storage be scaled automatically in AWS RDS?**
-Yes, AWS RDS supports storage autoscaling. When available storage drops below 10% for more than 5 minutes, RDS can automatically increase storage, up to a maximum threshold you define citeturn0search4
+Yes, AWS RDS supports storage autoscaling. When available storage drops below 10% for more than 5 minutes, RDS can automatically increase storage, up to a maximum threshold you define
 
 **Q4: Is there a difference in storage management between Aurora and other RDS engines?**
-Yes, Amazon Aurora uses a different storage model where you pay only for the storage you consume, and it automatically scales as needed. In contrast, other RDS engines require you to provision storage in advance citeturn0search4
+Yes, Amazon Aurora uses a different storage model where you pay only for the storage you consume, and it automatically scales as needed. In contrast, other RDS engines require you to provision storage in advance
 
 ---
 
 ## 💰 AWS RDS Pricing Models
 
 **Q5: What are the primary pricing models for AWS RDS instances?**
-AWS RDS offers two main pricing model:
+AWS RDS offers two main pricing model:
 
-- **On-Demand Instances:* Pay-per-hour with no long-term commitment. Ideal for unpredictable workload.
+- **On-Demand Instances:** Pay-per-hour with no long-term commitment. Ideal for unpredictable workload.
 
-- **Reserved Instances:* Commit to a 1- or 3-year term for significant discounts. Suitable for steady-state workload.
+- **Reserved Instances:** Commit to a 1- or 3-year term for significant discounts. Suitable for steady-state workload.
 
 **Q6: How much can I save with Reserved Instances?**
-Savings vary based on the payment optio:
+Savings vary based on the payment optio:
 
-- **No Upfront:* Around 30% discount over On-Demand pricin.
+- **No Upfront:** Around 30% discount over On-Demand pricin.
 
-- **Partial Upfront:* Up to 60% savings for a 3-year ter.
+- **Partial Upfront:** Up to 60% savings for a 3-year ter.
 
-- **All Upfront:* Approximately 63% discount for a 3-year commitmen. citeturn0search2
+- **All Upfront:** Approximately 63% discount for a 3-year commitmen.
 
 **Q7: Are there additional costs associated with AWS RDS?**
-Yes, consider the followin:
+Yes, consider the followin:
 
-- **Backup Storage:* Automated backups are free up to the size of your provisioned storage. Additional backup storage incurs charge.
+- **Backup Storage:** Automated backups are free up to the size of your provisioned storage. Additional backup storage incurs charge.
 
-- **Data Transfer:* Data transferred between RDS and EC2 in the same Availability Zone is free. Cross-AZ or internet data transfers may incur charge. citeturn0search1
+- **Data Transfer:** Data transferred between RDS and EC2 in the same Availability Zone is free. Cross-AZ or internet data transfers may incur charge.
 
-- **Snapshots:* Manual snapshots are stored in Amazon S3 and billed at standard S3 rate. citeturn0search5
+- **Snapshots:** Manual snapshots are stored in Amazon S3 and billed at standard S3 rate.
 
 **Q8: How can I estimate my AWS RDS costs?**
-Use the [AWS Pricing Calculator](https://calculator.aws.amazon.com/) to model your RDS costs based on instance type, storage, and usage pattern.
+Use the [AWS Pricing Calculator](https://calculator.aws.amazon.com/) to model your RDS costs based on instance type, storage, and usage pattern.
 
 ---
