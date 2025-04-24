@@ -58,3 +58,35 @@ Q: EC2 instance DB vs RDS DB Instance, Why do we preffer RDS DB Instance?
 | **KuebOps Recommendation**| RDS is recommended due to time and cost savings from reduced maintenance overhead.                     | Use EC2 if specific database requirements are not met by RDS or for cost-saving with in-house expertise.   |
 
 </details>
+
+---
+
+Q: Read replica's Main purpose?
+
+<details>
+  <summary>Click to view Answer</summary>
+
+The main purpose of a read replica is to offload read queries from the primary database instance, improving performance and scalability for read-heavy workloads. It achieves this by providing a read-only copy of the primary database that is kept up-to-date through asynchronous replication. 
+
+1. Offloading Read Queries: 
+- When a database receives a large volume of read requests, the primary instance can become overloaded, impacting overall performance and responsiveness.
+- Read replicas are designed to handle these read requests, allowing the primary instance to focus on write operations and other critical tasks.
+  
+2. Improved Performance: 
+- By distributing read queries across multiple instances, the overall performance of the database system can be significantly improved.
+- This can lead to faster query response times, reduced latency, and increased throughput.
+  
+3. Scalability: 
+- Read replicas provide a mechanism to scale out the read workload beyond the capacity of a single primary instance.
+- This allows businesses to handle increasing read demands without needing to upgrade the primary instance.
+  
+4. Disaster Recovery: 
+- In some scenarios, read replicas can also serve as a disaster recovery mechanism.
+- If the primary instance fails, a read replica can be promoted to become the new primary, ensuring business continuity.
+  
+5. Other Use Cases: Reporting and data warehousing, Application compatibility and scalability, Geographic distribution, Database testing and upgrades, and Backup offloading
+  
+</details>
+
+---
+
