@@ -14,7 +14,7 @@ Amazon Relational Database Service (Amazon RDS) is a web service that makes it e
 The service is designed to reduce the administrative burden, with AWS handling tasks such as provisioning, patching, backup, recovery, and scaling. Detailed features include:
 
 - **Managed Service:** AWS automates undifferentiated heavy lifting, such as software patching and backup management, allowing you to focus on application development.
-- **High Availability:** Multi-AZ deployments ensure failover support by maintaining a synchronous secondary instance, while read replicas enable scaling read operations, enhancing performance for read-heavy applications.
+- **High Availability:** Multi-AZ deployments ensure failover support by maintaining a synchronous secondary instance, while read replicas enable scaling read operations(can create upto 15 read replicas), enhancing performance for read-heavy applications.
 - **Security:** RDS integrates with AWS Identity and Access Management (IAM) for fine-grained access control and supports Virtual Private Cloud (VPC) for network isolation. Data encryption is available at rest using AWS Key Management Service (KMS) and in transit via SSL/TLS.
 - **Monitoring and Metrics:** Tools like Amazon CloudWatch provide metrics for CPU utilization, storage, and latency, while Performance Insights offers deep visibility into database performance. Enhanced Monitoring logs metrics from the host operating system.
 - **Automatic Backups:** Automated backups are enabled by default, with retention periods configurable up to 35 days. Manual snapshots can be taken for point-in-time recovery, ensuring data durability.
