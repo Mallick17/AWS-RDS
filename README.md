@@ -174,7 +174,7 @@ jdbc:postgresql://mydb.xxxxx.rds.amazonaws.com:5432/mydb?sslmode=verify-full&ssl
 2. Click "Modify".
 3. In "Certificate authority", select the newer CA.
 4. Review and apply changes (choose "Apply immediately" for instant update).
-
+- Reffer this article [https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL-certificate-rotation.html]
 ## Tips and Troubleshooting
 
 - **Do NOT upload your CA certificate to Amazon RDS.** Always configure it on your server/client.
