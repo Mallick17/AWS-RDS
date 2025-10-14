@@ -293,3 +293,6 @@ To optimize costs, AWS recommends several strategies:
 </details>
 
 ---
+
+# RDS Proxy
+### Test Cases for RDS DB to optimize
