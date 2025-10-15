@@ -295,6 +295,30 @@ To optimize costs, AWS recommends several strategies:
 ---
 
 ## Comparison and Prices of the RDS Instances as of October,2025
+### MySQL instance specifications
+#### Common Specifications
+- Nodes: 1
+- Utilization (On-Demand only) --> Value = 100, Unit = %Utilised/Month
+- Deployment option: Single AZ
+- Pricing model: On-Demand
+  
+#### Instance Type: db.r6g.4xlarge
+- vCPU: 16
+- Memory: 128 GiB
+- 1 instance(s) x 1.933 USD hourly x (100 / 100 Utilized/Month) x 730 hours in a month = 1411.0900 USD
+- RDS MySQL cost (monthly): 1,411.09 USD
+
+#### Instance Type: db.r6g.2xlarge
+- vCPU: 8
+- Memory: 64 GiB
+- 1 instance(s) x 0.967 USD hourly x (100 / 100 Utilized/Month) x 730 hours in a month = 705.9100 USD
+- RDS MySQL cost (monthly): 705.91 USD
+
+#### Instance Type: db.t4g.small
+- vCPU: 2
+- Memory: 2 GiB
+- 1 instance(s) x 0.042 USD hourly x (100 / 100 Utilized/Month) x 730 hours in a month = 30.6600 USD
+- RDS MySQL cost (monthly): 30.66 USD
 
 | Attribute                   | **db.r8g.large (Graviton4, DDR5)** | **db.r6g.large (Graviton2, DDR4)** | Notes                                                                              |
 | --------------------------- | ---------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------- |
