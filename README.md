@@ -296,3 +296,89 @@ To optimize costs, AWS recommends several strategies:
 
 # RDS Proxy
 ### Test Cases for RDS DB to optimize
+# Connection Open/Close Speed Test
+
+<details>
+    <summary>Click to view</summary>
+
+## What Are We Testing?
+You want to measure:
+- **The latency and overhead of opening and closing connections** (especially at scale)
+- **Resource impact** on the database and application during rapid connection churn
+- **Pooling efficiency** and scalability from RDS Proxy vs direct DB connections
+
+## Why Do This Test?
+Opening and closing database connections is expensive and can strain your RDS instance, especially in bursty or serverless workloads. RDS Proxy pools and reuses connections, aiming to reduce this cost and avoid bottlenecks. By benchmarking both approaches, you see real savings in latency and resource usage, and you reveal any proxy overhead.[1][2]
+
+## Step-by-Step: How To Run The Test
+
+**A. Prepare Your Environment**
+- Make sure your application/server (e.g., EC2 instance) is in the same VPC as both RDS and RDS Proxy endpoints. This ensures network latency is minimized for fair comparison.[1]
+
+**B. Choose/Write a Benchmark Tool**
+- For MySQL/PostgreSQL, use libraries like:
+  - Go: [database/sql](https://pkg.go.dev/database/sql) with custom scripts (many open source examples available)
+  - Python: [`mysql-connector-python`](https://mysql-connector-python.readthedocs.io/) or [`psycopg2`](https://www.psycopg.org/)
+  - Sysbench (for MySQL): supports connection benchmarking
+- Example Go benchmark tool (from ):[1]
+  - `benchmarkOpen`: Each loop, open a NEW connection, run a simple query, close connection.
+  - `benchmarkQuery`: Open connection ONCE, run repeated queries through it.
+
+**C. Run the Benchmark**
+- Run the test on both endpoints:
+  1. **Direct RDS Endpoint:**
+     - Loop N times (e.g., 1000):
+       - Open connection
+       - Run trivial query (e.g., SELECT 1)
+       - Close connection
+     - Measure average and total elapsed time.
+  2. **RDS Proxy Endpoint:**
+     - Repeat exact same steps as above, using RDS Proxy endpoint.
+- Record per-loop and total time taken for each method.[1]
+
+**D. Monitor Resource Impact**
+- While test runs, observe:
+  - CPU/Memory usage on RDS instance (CloudWatch)
+  - Number of open connections
+  - Proxy metrics (connections, pooling stats)
+
+**E. Analyze Results**
+- Compare latency per connection.
+- Note any differences in total time, CPU/Memory consumption, open connection spikes, or pool efficiency.
+- You should see lower latency and resource pressure after introducing the pool; any overhead from the proxy should be minimal for heavy workloads but might show up in microbenchmarks.[1]
+
+## Reference Example
+> "I copied the benchmark binary up to an EC2 server co-located with the RDS database and RDS proxy.... `benchmarkOpen` opens a connection and runs a query on each loop....
+> Direct RDS: ~5.85ms per loop; RDS Proxy: ~7.09ms per loop—shows proxy adds a small overhead, but real benefit is at scale when pooling is active."[1]
+
+## Summary
+- **Why:** Ensures your pooling configuration actually reduces connection churn and improves scalability.
+- **How:** Use looped connections + simple queries, comparing direct vs proxy endpoints, monitoring latency and resource impact.
+- **Tools:** Custom scripts (Go, Python), sysbench, and real production code.
+
+<details>
+    <summary>Click to view the Articles Related.</summary>
+
+[1](https://blog.sequin.io/rds-proxy/)
+[2](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.BestPractices.connection_pooling.html)
+[3](https://aws.amazon.com/blogs/database/use-amaon-rds-proxy-with-read-only-endpoints/)
+[4](https://aws.amazon.com/blogs/database/improving-application-availability-with-amazon-rds-proxy/)
+[5](https://stackoverflow.com/questions/70317250/should-i-close-an-rds-proxy-connection-inside-an-aws-lambda-function)
+[6](https://docs.datadoghq.com/integrations/amazon-rds-proxy/)
+[7](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.monitoring.html)
+[8](https://www.tothenew.com/blog/rds-proxy-in-production-real-world-lessons-limitations-and-why-we-use-it/)
+[9](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.html)
+[10](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/rds-proxy-connections.html)
+[11](https://www.youtube.com/watch?v=ULRnn6tIYu8)
+[12](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy-connections.html)
+[13](https://www.youtube.com/watch?v=kuDVmeVwvU8)
+[14](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.howitworks.html)
+[15](https://serverlessland.com/content/service/lambda/guides/effectively-running-java-on-serverless/rds-proxy)
+[16](https://aws.amazon.com/blogs/database/build-and-load-test-a-multi-tenant-saas-database-proxy-solution-with-amazon-rds-proxy/)
+[17](https://www.datadoghq.com/blog/monitor-rds-proxy-with-datadog/)
+[18](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.troubleshooting.html)
+[19](https://www.reddit.com/r/aws/comments/1fi9734/rds_proxy_v_connection_pooling_in_lambda/)
+
+</details>
+
+</details>
