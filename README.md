@@ -294,6 +294,37 @@ To optimize costs, AWS recommends several strategies:
 
 ---
 
+## Comparison and Prices of the RDS Instances as of October,2025
+
+| Attribute                   | **db.r8g.large (Graviton4, DDR5)** | **db.r6g.large (Graviton2, DDR4)** | Notes                                                                              |
+| --------------------------- | ---------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------- |
+| **vCPU**                    | 2                                  | 2                                  | Same number of vCPUs                                                               |
+| **Memory (GiB)**            | 16                                 | 16                                 | Same memory capacity                                                               |
+| **Memory Type**             | DDR5                               | DDR4                               | DDR5 offers higher memory bandwidth                                                |
+| **Memory Bandwidth**        | 12.5 Gbps                          | 10 Gbps                            | ~25% higher in R8g                                                                 |
+| **EBS Throughput**          | 10 Gbps                            | 4.7 Gbps                           | ~112% higher in R8g                                                                |
+| **Throughput**              | 41% higher                         | Baseline                           | “Throughput” here refers to overall data transfer rate performance (I/O + network) |
+| **Latency**                 | 29% lower                          | Baseline                           | Latency is improved (lower is better)                                              |
+| **Cost per Hour (approx.)** | $0.2720                            | $0.2420                            | R8g is ~12% more expensive                                                         |
+| **Processor Type**          | Graviton4                          | Graviton2                          | Graviton4 = latest generation, better efficiency                                   |
+| **On-Memory Encryption**    | ✅ Yes                              | ✅ Yes                              | Both support it, but Graviton4 has improved memory bandwidth                       |
+
+<details>
+    <summary>Click to view Related articles and Documentation</summary>
+
+RDS Instance Types with db.r8g.
+https://aws.amazon.com/rds/instance-types/
+ 
+EC2 Instance Types with r8g
+https://aws.amazon.com/ec2/instance-types/r8g/
+ 
+EC2 Instance with r6g
+https://aws.amazon.com/ec2/instance-types/r6g/
+  
+</details>
+
+---
+
 # RDS Proxy
 ### Test Cases for RDS DB to optimize
 # Connection Open/Close Speed Test
