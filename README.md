@@ -350,7 +350,16 @@ https://aws.amazon.com/ec2/instance-types/r6g/
 ---
 
 # RDS Proxy
-### Test Cases for RDS DB to optimize
+
+## Precautions to ensure both Data Integrity and Accurate Performance Measurements.
+#### Environment Preparation
+#### Configuration and Data Safeguards
+- Enable automatic backups and verify snapshots restoration works before testing.
+- If testing RDS Proxy, confirm connection settings, pool size, and authentication modes match production-like configuration.
+- SSH into RDS and check everything.
+
+
+## Test Cases for RDS DB to optimize
 ### Introduction to Testing RDS Proxy
 Amazon RDS Proxy is a fully managed database proxy service that enhances connection management for Amazon RDS databases (e.g., PostgreSQL, MySQL) by providing connection pooling, multiplexing, and faster failover handling. When integrating it with an existing RDS instance, these tests validate that the proxy improves scalability, reduces connection overhead, and maintains performance without introducing new issues. The tests you listed focus on core proxy behaviors like pooling efficiency, latency, and resource handling. Below, I'll explain **why** each test is important (tied to RDS Proxy's benefits like reducing failover times by up to 66% and preserving connections during outages) and **how** to conduct it using tools like pgbench (for PostgreSQL benchmarks), Apache JMeter (for load simulation), or simple scripts. Assume your RDS is PostgreSQL for examples; adapt for MySQL.
 
