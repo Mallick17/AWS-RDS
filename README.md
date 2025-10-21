@@ -178,7 +178,21 @@ When choosing an instance family and DB engine for Amazon RDS, several factors s
 
 ---
 
-# 1) Quick: run MySQL with `docker run` (fastest)
+# Here’s a clean, professional header you can use for your documentation or notes:
+
+---
+
+# **Local MySQL Setup and RDS Proxy Simulation Lab**
+
+## **Objective**
+
+Set up a local MySQL environment to:
+
+1. **Create a database and schema** that mirror an **Amazon RDS** setup.
+2. **Simulate and analyze connection behavior** under concurrent load.
+3. **Prepare for testing RDS Proxy–like connection pooling and query filters** locally (using ProxySQL in later steps).
+
+### 1) Quick: run MySQL with `docker run` (fastest)
 
 Open a terminal and run:
 
@@ -208,7 +222,7 @@ If you prefer a compose file (recommended for repeatability), use the YAML in st
 
 ---
 
-## 1b) (Optional) Docker Compose version
+#### 1b) (Optional) Docker Compose version
 
 Create `docker-compose.yml`:
 
@@ -239,7 +253,7 @@ docker compose ps
 
 ---
 
-# 2) Connect to the MySQL instance
+### 2) Connect to the MySQL instance
 
 Option A — from host using `mysql` client (if installed):
 
@@ -258,7 +272,7 @@ You should get a MySQL prompt: `mysql>`
 
 ---
 
-# 3) Create the schema and tables (paste into a file `schema.sql`)
+### 3) Create the schema and tables (paste into a file `schema.sql`)
 
 Create a file `schema.sql` with this content:
 
@@ -309,7 +323,7 @@ DESCRIBE orders;
 
 ---
 
-# 4) Seed some data (simple script)
+### 4) Seed some data (simple script)
 
 Create `seed.sql`:
 
@@ -344,7 +358,7 @@ SELECT COUNT(*) FROM appdb.orders;
 
 ---
 
-# 5) Observe connections (tools & commands)
+### 5) Observe connections (tools & commands)
 
 Open Terminal A — to watch connection counts live:
 
@@ -383,9 +397,9 @@ SELECT * FROM performance_schema.threads LIMIT 20;
 
 ---
 
-# 6) Load testing — simulate concurrent clients
+### 6) Load testing — simulate concurrent clients
 
-### Option 1: `mysqlslap` (simple)
+#### Option 1: `mysqlslap` (simple)
 
 If you have `mysqlslap` available (usually with `mysql-client`), run:
 
@@ -400,7 +414,7 @@ Parameters:
 * `--concurrency=50` → 50 concurrent clients
 * `--iterations=10` → how many times to repeat
 
-### Option 2: concurrent simple clients with `sysbench` (if installed)
+#### Option 2: concurrent simple clients with `sysbench` (if installed)
 
 Install sysbench, then run a simple OLTP read-only or read-write test. Example (read-only):
 
@@ -420,7 +434,7 @@ sysbench oltp_read_only ... cleanup
 
 (Replace `...` with corresponding options as the prepare command.)
 
-### Option 3: custom small Python script (no extra installs)
+#### Option 3: custom small Python script (no extra installs)
 
 If you have Python, this runs N threads that repeatedly query:
 
@@ -458,7 +472,7 @@ python3 load_test.py
 
 ---
 
-# 7) Watch what happens while load runs
+### 7) Watch what happens while load runs
 
 While `mysqlslap` or your script is running, look at Terminal A & B to see:
 
@@ -479,13 +493,13 @@ SHOW GLOBAL STATUS LIKE 'Connection_errors%';
 
 ---
 
-# 8) If you want to simulate connection pooling behavior (next step)
+### 8) If you want to simulate connection pooling behavior (next step)
 
 I won’t add it here since you asked to first set up MySQL + test connections. But quick preview: to mimic RDS Proxy connection pooling, you’ll run a MySQL proxy (ProxySQL or mysql-proxy) and point clients to the proxy; proxy maintains a pool of backend connections and multiplexes client requests. If you want, after you confirm this MySQL setup and tests worked, I’ll give you the ProxySQL Docker-compose + config and steps to repeat the same load while watching `stats_mysql_connection_pool` in ProxySQL.
 
 ---
 
-# 9) Troubleshooting & useful tips
+### 9) Troubleshooting & useful tips
 
 * If container fails to start: `docker logs local-mysql` and check for permission/volume errors.
 * If `mysql` client complains about `Can't connect to MySQL server on '127.0.0.1'`: check `docker ps` and ensure port 3306 is mapped and container is healthy.
@@ -512,4 +526,6 @@ If you’re ready, do these now:
 2. Load `schema.sql` and `seed.sql`.
 3. Start the `watch` for `Threads_connected`.
 4. Start `mysqlslap` (or run the Python load test).
+
+---
 
