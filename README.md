@@ -373,6 +373,9 @@ mysql -h <HOST> -u <USER> -p <DB_NAME> < ~/backup.sql
 
 ---
 
+<details>
+    <summary>Click to view Explained Format</summary>
+
 # **Local MySQL Setup and RDS Proxy Simulation Lab**
 
 ## **Objective**
@@ -465,9 +468,6 @@ docker exec -it local-mysql mysql -u root -prootpass
 You should get a MySQL prompt: `mysql>`
 
 ---
-
-<details>
-    <summary>Click to view the creation of the schema and tables</summary>
 
 ### 3) Create the schema and tables (paste into a file `schema.sql`)
 
@@ -726,8 +726,18 @@ If you’re ready, do these now:
 
 </details>
 
-<details>
-    <summary>Click to view Explained Format</summary>
+
+
+
+# **Local MySQL Setup and RDS Proxy Simulation Lab**
+
+## **Objective**
+
+Set up a local MySQL environment to:
+
+1. **Create a database and schema** that mirror an **Amazon RDS** setup.
+2. **Simulate and analyze connection behavior** under concurrent load.
+3. **Prepare for testing RDS Proxy–like connection pooling and query filters** locally (using ProxySQL in later steps).
 
 ### Step 1: Setting Up a Local MySQL Container Using Docker
 
@@ -743,18 +753,28 @@ This downloads the latest MySQL image from Docker Hub. You can specify a version
 #### 1.2 Run the MySQL Container
 Run the container with a root password and expose the default MySQL port (3306):
 ```
-docker run --name local-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d -p 3306:3306 mysql:latest
+# pull + run MySQL 8 container (root password=rootpass, db=appdb)
+docker run --name local-mysql \
+  -e MYSQL_ROOT_PASSWORD=rootpass \
+  -e MYSQL_DATABASE=appdb \
+  -p 3306:3306 \
+  -d mysql:8.0
 ```
+
+What this does:  
 - `--name local-mysql`: Names the container for easy reference.
-- `-e MYSQL_ROOT_PASSWORD=my-secret-pw`: Sets the root password (change this to something secure).
+- `-e MYSQL_ROOT_PASSWORD=rootpass`: Sets the root password (change this to something secure).
 - `-d`: Runs in detached mode (background).
 - `-p 3306:3306`: Maps the container's port 3306 to your host's port 3306 so you can connect from localhost.
+> Creates `appdb` initially.
 
 Verify it's running:
+- You should see `local-mysql` in the list.
 ```
 docker ps
+docker logs -f local-mysql
+# press Ctrl+C after you see "ready for connections"
 ```
-You should see `local-mysql` in the list.
 
 #### 1.3 Access the MySQL Database
 Connect to the MySQL shell inside the container:
@@ -901,7 +921,5 @@ To understand completely:
 - **Connection Pooling**: ProxySQL maintains a pool of reusable connections to MySQL. When a request comes in, it borrows from the pool instead of opening a new one, reducing overhead.
 - **Optimization Tips**: Set `mysql-max_connections` in ProxySQL variables for pool size. Monitor with `SELECT * FROM stats_mysql_connection_pool;` in ProxySQL admin.
 - This simulates RDS Proxy's pooling (which handles thousands of connections efficiently). In real RDS Proxy, you configure via AWS console, but the concepts are the same.
-  
-</details>
 
 ---
