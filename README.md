@@ -287,19 +287,19 @@ If you can connect and see the MySQL prompt — ✅ connection works.
 
 Let’s say:
 
-* Database: `redtaxi`
+* Database: `Ola`
 * Table: `bookings`
 
 Run:
 
 ```bash
-mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p redtaxi bookings > ~/bookings_backup.sql
+mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p Ola bookings > ~/bookings_backup.sql
 ```
 
 Example:
 
 ```bash
-mysqldump -h mydb.xxxxx.ap-south-1.rds.amazonaws.com -u admin -p redtaxi bookings > ~/bookings_backup.sql
+mysqldump -h mydb.xxxxx.ap-south-1.rds.amazonaws.com -u admin -p Ola bookings > ~/bookings_backup.sql
 ```
 
 You’ll be asked for the password → then it creates a `.sql` file in your home directory.
@@ -313,16 +313,16 @@ You’ll be asked for the password → then it creates a `.sql` file in your hom
 To dump the entire database (all tables, triggers, views, etc.):
 
 ```bash
-mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p redtaxi > ~/redtaxi_backup.sql
+mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p Ola > ~/Ola_backup.sql
 ```
 
 You can compress it (optional):
 
 ```bash
-mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p redtaxi | gzip > ~/redtaxi_backup.sql.gz
+mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p Ola | gzip > ~/Ola_backup.sql.gz
 ```
 
-✅ **Output file:** `/home/ec2-user/redtaxi_backup.sql` or `.gz`
+✅ **Output file:** `/home/ec2-user/Ola_backup.sql` or `.gz`
 
 ---
 
@@ -345,13 +345,13 @@ mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p --all-databases | gzip > ~/rds_full
 ## Optional: Add Timestamp for versioned backups
 
 ```bash
-mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p redtaxi > ~/redtaxi_$(date +%F_%H-%M).sql
+mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p Ola > ~/Ola_$(date +%F_%H-%M).sql
 ```
 
 This creates files like:
 
 ```
-redtaxi_2025-10-21_15-30.sql
+Ola_2025-10-21_15-30.sql
 ```
 
 ### Restore Commands (if needed later)
@@ -368,7 +368,7 @@ mysql -h <HOST> -u <USER> -p <DB_NAME> < ~/backup.sql
 * If your DB is large, you can add `--single-transaction` to avoid locking:
 
   ```bash
-  mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p --single-transaction redtaxi > ~/redtaxi_backup.sql
+  mysqldump -h <RDS_ENDPOINT> -u <USERNAME> -p --single-transaction Ola > ~/Ola_backup.sql
   ```
 
 ---
