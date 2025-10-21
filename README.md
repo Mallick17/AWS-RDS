@@ -177,3 +177,339 @@ When choosing an instance family and DB engine for Amazon RDS, several factors s
   - Consider high availability features, such as Multi-AZ deployments, which are supported across all instance families and engines.
 
 ---
+
+# 1) Quick: run MySQL with `docker run` (fastest)
+
+Open a terminal and run:
+
+```bash
+# pull + run MySQL 8 container (root password=rootpass, db=appdb)
+docker run --name local-mysql \
+  -e MYSQL_ROOT_PASSWORD=rootpass \
+  -e MYSQL_DATABASE=appdb \
+  -p 3306:3306 \
+  -d mysql:8.0
+```
+
+What this does:
+
+* Exposes MySQL on `127.0.0.1:3306`
+* Root password = `rootpass`
+* Creates `appdb` initially
+
+Wait a few seconds for the container to initialize. Check logs:
+
+```bash
+docker logs -f local-mysql
+# press Ctrl+C after you see "ready for connections"
+```
+
+If you prefer a compose file (recommended for repeatability), use the YAML in step 1b.
+
+---
+
+## 1b) (Optional) Docker Compose version
+
+Create `docker-compose.yml`:
+
+```yaml
+version: "3.8"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: local-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: appdb
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+```
+
+Run:
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+---
+
+# 2) Connect to the MySQL instance
+
+Option A — from host using `mysql` client (if installed):
+
+```bash
+mysql -h 127.0.0.1 -P 3306 -u root -p
+# enter: rootpass
+```
+
+Option B — using `docker exec` to run the client inside the container:
+
+```bash
+docker exec -it local-mysql mysql -u root -prootpass
+```
+
+You should get a MySQL prompt: `mysql>`
+
+---
+
+# 3) Create the schema and tables (paste into a file `schema.sql`)
+
+Create a file `schema.sql` with this content:
+
+```sql
+-- schema.sql
+CREATE DATABASE IF NOT EXISTS appdb;
+USE appdb;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product VARCHAR(100) NOT NULL,
+    quantity INT DEFAULT 1,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+```
+
+Load it into MySQL (from host):
+
+```bash
+mysql -h 127.0.0.1 -P3306 -u root -prootpass < schema.sql
+```
+
+Or from inside container:
+
+```bash
+docker cp schema.sql local-mysql:/schema.sql
+docker exec -it local-mysql mysql -uroot -prootpass < /schema.sql
+```
+
+Verify:
+
+```sql
+-- at mysql> prompt
+USE appdb;
+SHOW TABLES;
+DESCRIBE users;
+DESCRIBE orders;
+```
+
+---
+
+# 4) Seed some data (simple script)
+
+Create `seed.sql`:
+
+```sql
+USE appdb;
+
+-- insert 100 users
+INSERT INTO users (username, email)
+SELECT CONCAT('user', seq), CONCAT('user', seq, '@example.com')
+FROM (
+  SELECT @row := @row + 1 AS seq FROM information_schema.columns, (SELECT @row := 0) init LIMIT 100
+) s;
+
+-- insert 1000 orders randomly
+INSERT INTO orders (user_id, product, quantity)
+SELECT FLOOR(1 + RAND() * 100), CONCAT('product', FLOOR(1 + RAND()*20)), FLOOR(1 + RAND()*5)
+FROM (SELECT 1 FROM information_schema.columns LIMIT 1000) t;
+```
+
+Load it:
+
+```bash
+mysql -h127.0.0.1 -P3306 -u root -prootpass < seed.sql
+```
+
+Check counts:
+
+```sql
+SELECT COUNT(*) FROM appdb.users;
+SELECT COUNT(*) FROM appdb.orders;
+```
+
+---
+
+# 5) Observe connections (tools & commands)
+
+Open Terminal A — to watch connection counts live:
+
+```bash
+# every 1 second, show threads connected and threads running (Linux watch)
+watch -n 1 "mysql -h127.0.0.1 -P3306 -u root -prootpass -e \"SHOW STATUS WHERE Variable_name IN ('Threads_connected','Threads_running');\""
+```
+
+If you don’t have `watch`, use a tiny loop:
+
+```bash
+while true; do date; mysql -h127.0.0.1 -P3306 -u root -prootpass -e "SHOW STATUS WHERE Variable_name IN ('Threads_connected','Threads_running');"; sleep 1; done
+```
+
+Open Terminal B — to inspect processes / session list:
+
+```bash
+# interactive
+mysql -h127.0.0.1 -P3306 -u root -prootpass -e "SELECT ID, USER, HOST, DB, COMMAND, TIME, STATE, INFO FROM information_schema.PROCESSLIST ORDER BY TIME DESC LIMIT 20;" 
+```
+
+You can also use:
+
+```sql
+SHOW PROCESSLIST;
+-- or
+SELECT * FROM information_schema.PROCESSLIST;
+```
+
+Performance schema queries (if you want deeper visibility):
+
+```sql
+SELECT VARIABLE_VALUE FROM performance_schema.global_status WHERE VARIABLE_NAME = 'Threads_connected';
+SELECT * FROM performance_schema.threads LIMIT 20;
+```
+
+---
+
+# 6) Load testing — simulate concurrent clients
+
+### Option 1: `mysqlslap` (simple)
+
+If you have `mysqlslap` available (usually with `mysql-client`), run:
+
+```bash
+# a read-heavy test: many concurrent clients doing SELECT
+mysqlslap --host=127.0.0.1 --port=3306 --user=root --password=rootpass \
+  --concurrency=50 --iterations=10 --query="SELECT COUNT(*) FROM appdb.orders WHERE product LIKE 'product%';"
+```
+
+Parameters:
+
+* `--concurrency=50` → 50 concurrent clients
+* `--iterations=10` → how many times to repeat
+
+### Option 2: concurrent simple clients with `sysbench` (if installed)
+
+Install sysbench, then run a simple OLTP read-only or read-write test. Example (read-only):
+
+```bash
+# prepare (if you want to use sysbench's oltp)
+sysbench oltp_read_only --db-driver=mysql --mysql-host=127.0.0.1 --mysql-port=3306 \
+  --mysql-user=root --mysql-password=rootpass --mysql-db=appdb \
+  --tables=10 --table-size=10000 prepare
+
+# run with concurrency 50 for 60 seconds
+sysbench oltp_read_only --db-driver=mysql --mysql-host=127.0.0.1 --mysql-user=root --mysql-password=rootpass \
+  --mysql-db=appdb --tables=10 --table-size=10000 --threads=50 --time=60 run
+
+# cleanup afterwards
+sysbench oltp_read_only ... cleanup
+```
+
+(Replace `...` with corresponding options as the prepare command.)
+
+### Option 3: custom small Python script (no extra installs)
+
+If you have Python, this runs N threads that repeatedly query:
+
+```python
+# save as load_test.py
+import mysql.connector, threading, time
+from random import randint
+
+def worker(id, iterations):
+    cnx = mysql.connector.connect(host='127.0.0.1', port=3306, user='root', password='rootpass', database='appdb')
+    cur = cnx.cursor()
+    for i in range(iterations):
+        uid = randint(1, 100)
+        cur.execute("SELECT COUNT(*) FROM orders WHERE user_id=%s", (uid,))
+        cur.fetchone()
+    cur.close()
+    cnx.close()
+
+threads = []
+for i in range(50):  # 50 concurrent threads
+    t = threading.Thread(target=worker, args=(i, 200))
+    threads.append(t)
+    t.start()
+
+for t in threads:
+    t.join()
+print("done")
+```
+
+Run:
+
+```bash
+python3 load_test.py
+```
+
+---
+
+# 7) Watch what happens while load runs
+
+While `mysqlslap` or your script is running, look at Terminal A & B to see:
+
+* `Threads_connected` rising to match concurrent clients
+* `SHOW PROCESSLIST` showing many `Sleep` / `Query` states depending on timing
+* `Threads_running` indicates currently active queries
+
+You can also query:
+
+```sql
+SHOW GLOBAL STATUS LIKE 'Connections';
+SHOW GLOBAL STATUS LIKE 'Threads_connected';
+SHOW GLOBAL STATUS LIKE 'Threads_running';
+SHOW GLOBAL STATUS LIKE 'Connection_errors%';
+```
+
+`Connections` is cumulative (how many connection attempts since server start). `Threads_connected` shows currently open sessions.
+
+---
+
+# 8) If you want to simulate connection pooling behavior (next step)
+
+I won’t add it here since you asked to first set up MySQL + test connections. But quick preview: to mimic RDS Proxy connection pooling, you’ll run a MySQL proxy (ProxySQL or mysql-proxy) and point clients to the proxy; proxy maintains a pool of backend connections and multiplexes client requests. If you want, after you confirm this MySQL setup and tests worked, I’ll give you the ProxySQL Docker-compose + config and steps to repeat the same load while watching `stats_mysql_connection_pool` in ProxySQL.
+
+---
+
+# 9) Troubleshooting & useful tips
+
+* If container fails to start: `docker logs local-mysql` and check for permission/volume errors.
+* If `mysql` client complains about `Can't connect to MySQL server on '127.0.0.1'`: check `docker ps` and ensure port 3306 is mapped and container is healthy.
+* To change max connections (temporarily):
+
+  ```sql
+  SET GLOBAL max_connections = 500;
+  ```
+
+  (To persist, pass `--characteristic` via my.cnf or container env — I can show an example file if you want.)
+* To stop & remove:
+
+  ```bash
+  docker stop local-mysql && docker rm local-mysql
+  # or for compose:
+  docker compose down
+  ```
+
+---
+
+If you’re ready, do these now:
+
+1. Run the `docker run` (or `docker compose up`) command.
+2. Load `schema.sql` and `seed.sql`.
+3. Start the `watch` for `Threads_connected`.
+4. Start `mysqlslap` (or run the Python load test).
+
