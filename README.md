@@ -245,9 +245,10 @@ docker logs -f local-mysql
 # press Ctrl+C after you see "ready for connections"
 ```
 
-If you prefer a compose file (recommended for repeatability), use the YAML in step 1b.
+<details>
+    <summary>Click to view a compose file (recommended for repeatability), use the YAML in step 1b.</summary>
 
----
+If you prefer a compose file (recommended for repeatability), use the YAML in step 1b.
 
 #### 1b) (Optional) Docker Compose version
 
@@ -278,6 +279,8 @@ docker compose up -d
 docker compose ps
 ```
 
+</details>
+
 ---
 
 ### 2) Connect to the MySQL instance
@@ -298,6 +301,9 @@ docker exec -it local-mysql mysql -u root -prootpass
 You should get a MySQL prompt: `mysql>`
 
 ---
+
+<details>
+    <summary>Click to view the creation of the schema and tables</summary>
 
 ### 3) Create the schema and tables (paste into a file `schema.sql`)
 
@@ -553,6 +559,8 @@ If you’re ready, do these now:
 2. Load `schema.sql` and `seed.sql`.
 3. Start the `watch` for `Threads_connected`.
 4. Start `mysqlslap` (or run the Python load test).
+
+</details>
 
 <details>
     <summary>Click to view Explained Format</summary>
