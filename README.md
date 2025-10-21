@@ -430,7 +430,7 @@ Connect to the MySQL shell inside the container:
 ```
 docker exec -it local-mysql mysql -uroot -p
 ```
-Enter the password (`my-secret-pw`) when prompted. You'll be at the MySQL prompt (`mysql>`).
+Enter the password (`rootpass`) when prompted. You'll be at the MySQL prompt (`mysql>`).
 
 Alternatively, use a GUI tool like MySQL Workbench or DBeaver to connect to `localhost:3306` with user `root` and your password.
 
@@ -494,7 +494,7 @@ Install sysbench (a benchmarking tool) to simulate load:
 
 Run a simple read-only load test with 10 concurrent connections for 30 seconds:
 ```
-sysbench oltp_read_only --db-driver=mysql --mysql-db=my_rds_like_db --mysql-user=root --mysql-password=my-secret-pw --mysql-host=localhost --threads=10 --time=30 --report-interval=5 run
+sysbench oltp_read_only --db-driver=mysql --mysql-db=my_rds_like_db --mysql-user=root --mysql-password=rootpass --mysql-host=localhost --threads=10 --time=30 --report-interval=5 run
 ```
 - This spawns 10 threads, each opening a connection and running queries.
 - Watch the output for throughput, latency, and errors.
@@ -531,7 +531,7 @@ SAVE MYSQL SERVERS TO DISK;
 
 Add a user for pooling (matching your MySQL root):
 ```sql
-INSERT INTO mysql_users (username, password, default_hostgroup) VALUES ('root', 'my-secret-pw', 10);
+INSERT INTO mysql_users (username, password, default_hostgroup) VALUES ('root', 'rootpass', 10);
 LOAD MYSQL USERS TO RUNTIME;
 SAVE MYSQL USERS TO DISK;
 ```
@@ -562,7 +562,7 @@ It should apply the rewrite. Monitor connections: With pooling, `SHOW PROCESSLIS
 
 For load testing through the proxy, update sysbench:
 ```
-sysbench oltp_read_only --db-driver=mysql --mysql-db=my_rds_like_db --mysql-user=root --mysql-password=my-secret-pw --mysql-host=localhost --mysql-port=6033 --threads=10 --time=30 run
+sysbench oltp_read_only --db-driver=mysql --mysql-db=my_rds_like_db --mysql-user=root --mysql-password=rootpass --mysql-host=localhost --mysql-port=6033 --threads=10 --time=30 run
 ```
 Compare `SHOW PROCESSLIST;`—with pooling, you'll see multiplexed connections (e.g., 1-5 backend vs. 10 frontend).
 
