@@ -931,13 +931,7 @@ If you’re ready, do these now:
 <details>
     <summary>Click to view</summary>
 
-## 🧭 Overall Debug Strategy
-
-When anything fails with **RDS Proxy**, your best friend for debugging is **CloudWatch Logs**, **RDS Events**, and **VPC Flow Logs** — together, they tell you *what failed, where, and why.*
-
-To make this concrete, here’s how you’d handle failures per checklist section 👇
-
----
+## Overall Debug Strategy
 
 ## 1. **Review Use Case and Limits**
 
